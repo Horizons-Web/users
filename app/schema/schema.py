@@ -9,7 +9,11 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    id: int
+    id: Optional[str]
+    token: Optional[str]
+    role: Optional[str]
+    expiration_date: Optional[datetime]
+    user_id: Optional[int]
 
 
 class ClientCreate(BaseModel):
@@ -36,5 +40,6 @@ class ChangePassword(BaseModel):
     confirm_password: str
 
 
-class CreatedPreference(BaseModel):
-    activity_category: str
+class Login(BaseModel):
+    username: str
+    password: str

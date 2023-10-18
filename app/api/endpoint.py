@@ -1,6 +1,5 @@
 from fastapi import Depends, status, HTTPException, APIRouter
 from fastapi.security import HTTPBearer
-from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
 
@@ -21,8 +20,7 @@ router = APIRouter(
 @router.post(
     "/login", status_code=status.HTTP_200_OK
 )
-def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(repository.get_db)):
-
+def login(user_credentials: schema.Login, db: Session = Depends(repository.get_db)):
     user = repository.get_user_by_username(db, user_credentials.username)
     if user is None:
         raise (
@@ -35,12 +33,17 @@ def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session =
             HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Credenciales incorrectas")
         )
 
-    access_token = auth.create_access_token(data={"user_id": user.id})
+    token = schema.TokenData(
+        user_id=user.id,
+        role=user.user_type,
+    )
 
-    return {
-        "access_token": access_token,
-        "token_type": "bearer"
-    }
+    token_update = repository.get_token_by_user_id(db, user.id)
+    token = auth.create_access_token(token)
+    if token_update is None:
+        return repository.create_token(db, token)
+    else:
+        return repository.update_token(db, token)
 
 
 @router.post(
@@ -96,7 +99,6 @@ def change_password(
         db: Session = Depends(repository.get_db),
         current_user: schema.TokenData = Depends(auth.get_current_user)
 ):
-
     if password.new_password != password.confirm_password:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Las contraseñas no coinciden")
 

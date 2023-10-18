@@ -4,16 +4,18 @@ from email.mime.multipart import MIMEMultipart
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 
-smtp_server = "indanet2.ferozo.com"
-smtp_port = 465
+from ..config import settings
+
+
+smtp_server = settings.SMTP_SERVER
+smtp_port = settings.SMTP_PORT
 smtp_use_ssl = True
 
-from_address = "joaquinreyero@globaltechsrl.com.ar"
-password = "Gurumiguel@2023"
+from_address = settings.EMAIL_ADDRESS
+password = settings.PASSWORD_EMAIL
 
-# Secreto para firmar tokens
-SECRET_KEY = 'tu_secreto'
-ALGORITHM = 'HS256'
+SECRET_KEY = settings.SECRET_KEY_EMAIL
+ALGORITHM = settings.ALGORITHM_EMAIL
 
 
 def send_confirmation_email(email: str, confirmation_token: str):
@@ -21,7 +23,8 @@ def send_confirmation_email(email: str, confirmation_token: str):
     subject = "Confirma tu cuenta"
 
     # Crear un objeto MIMEText con el contenido HTML
-    html_content = f"Click <a href='http://127.0.0.1:8000/api/users/confirm/?token={confirmation_token}'>here</a> to confirm your registration."
+    html_content = (f"Click <a href='http://127.0.0.1:8000/api/users/confirm/?token={confirmation_token}'>here</a> to "
+                    f"confirm your registration.")
     html_message = MIMEText(html_content, "html")
 
     # Crear un objeto MIMEMultipart para combinar texto y HTML
@@ -51,7 +54,6 @@ def send_confirmation_email(email: str, confirmation_token: str):
         smtp.quit()
 
 
-# Función para generar un token JWT
 def create_confirmation_token(data: dict, expires_delta: timedelta):
     to_encode = data.copy()
     expire = datetime.utcnow() + expires_delta
@@ -60,7 +62,6 @@ def create_confirmation_token(data: dict, expires_delta: timedelta):
     return encoded_jwt
 
 
-# Función para decodificar un token JWT
 def decode_token(token):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])

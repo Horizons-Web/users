@@ -55,7 +55,6 @@ def get_password_by_id(db: Session, user_id: int):
 
 
 def create_client(db: Session, client_create: schema.ClientCreate):
-
     address = models.Address(
         country=client_create.country,
         administrative_area_level_1=client_create.administrative_area_level_1,
@@ -125,3 +124,37 @@ def change_password(db: Session, user_id: int, new_password: str):
     db.commit()
 
 
+def create_token(db: Session, token_create: schema.TokenData):
+    new_token = models.Token(
+        token=token_create.token,
+        role=token_create.role,
+        expiration_date=token_create.expiration_date,
+        is_active=True,
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow(),
+        user_id=token_create.user_id,
+    )
+    db.add(new_token)
+    db.flush()
+    db.commit()
+
+    return token_create
+
+
+def update_token(db: Session, token: schema.TokenData):
+
+    existing_token = db.query(models.Token).filter(models.Token.user_id == token.user_id).first()
+    if existing_token:
+        existing_token.token = token.token
+        existing_token.expiration_date = token.expiration_date
+        existing_token.is_active = True
+        existing_token.updated_at = datetime.utcnow()
+    db.commit()
+
+    return existing_token
+
+
+def get_token_by_user_id(db: Session, user_id: int):
+    user = db.query(models.Token).filter(models.Token.user_id == user_id).first()
+    if user:
+        return user

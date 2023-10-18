@@ -4,44 +4,44 @@ from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
 from ..schema import schema
-
+from ..config import settings
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 
-SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = settings.ALGORITHM
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 
 
-def create_access_token(data: dict):
-    to_encode = data.copy()
+class CredentialsException(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Credenciales incorrectas",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
 
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
 
+def create_access_token(data: schema.TokenData):
+    exp = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode = data.dict()
+    to_encode["expiration_date"] = str(exp)
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-    return encoded_jwt
+    data.token = encoded_jwt
+    data.expiration_date = exp
 
-
-def verify_access_token(token: str, credential_exception):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
-        id: int = payload.get("user_id")
-
-        if id is None:
-            raise credential_exception
-        token_data = schema.TokenData(id=id)
-    except JWTError:
-        raise credential_exception
-
-    return token_data
+    return data
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Credenciales incorrectas",
-        headers={"WWW-Authenticate": "Bearer"}
-    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        id: int = payload.get("user_id")
 
-    return verify_access_token(token, credentials_exception)
+        if id is None:
+            raise CredentialsException
+        token_data = TokenData(id=id)
+    except JWTError:
+        raise CredentialsException()
+
+    return token_data
