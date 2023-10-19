@@ -9,10 +9,10 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    id: Optional[str]
     token: Optional[str]
     role: Optional[str]
     expiration_date: Optional[datetime]
+    is_active: Optional[bool]
     user_id: Optional[int]
 
 

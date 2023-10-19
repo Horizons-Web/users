@@ -142,7 +142,6 @@ def create_token(db: Session, token_create: schema.TokenData):
 
 
 def update_token(db: Session, token: schema.TokenData):
-
     existing_token = db.query(models.Token).filter(models.Token.user_id == token.user_id).first()
     if existing_token:
         existing_token.token = token.token
@@ -158,3 +157,10 @@ def get_token_by_user_id(db: Session, user_id: int):
     user = db.query(models.Token).filter(models.Token.user_id == user_id).first()
     if user:
         return user
+
+
+def deactivate_token(db: Session, user_id: int):
+    token = db.query(models.Token).filter(models.Token.user_id == user_id).first()
+    if token:
+        token.is_active = False
+        db.commit()

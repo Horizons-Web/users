@@ -1,5 +1,5 @@
 from fastapi import Depends, status, HTTPException, APIRouter
-from fastapi.security import HTTPBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from datetime import timedelta
 
@@ -28,6 +28,8 @@ def login(user_credentials: schema.Login, db: Session = Depends(repository.get_d
         )
 
     hashed_password = repository.get_password_by_username(db, user_credentials.username)
+    print(user_credentials.password)
+    print(hashed_password)
     if not verify(user_credentials.password, hashed_password):
         raise (
             HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Credenciales incorrectas")
@@ -39,15 +41,17 @@ def login(user_credentials: schema.Login, db: Session = Depends(repository.get_d
     )
 
     token_update = repository.get_token_by_user_id(db, user.id)
+
     token = auth.create_access_token(token)
+
     if token_update is None:
-        return repository.create_token(db, token)
+        return repository.create_token(db, token).token
     else:
-        return repository.update_token(db, token)
+        return repository.update_token(db, token).token
 
 
 @router.post(
-    "/clients", status_code=status.HTTP_201_CREATED, response_model=schema.ClientCreated
+    "/signup", status_code=status.HTTP_201_CREATED, response_model=schema.ClientCreated
 )
 def create_client(client_create: schema.ClientCreate, db: Session = Depends(repository.get_db)):
     username = repository.get_user_by_username(db, client_create.username)
@@ -97,17 +101,35 @@ def confirm_user(token: str, db: Session = Depends(repository.get_db)):
 def change_password(
         password: schema.ChangePassword,
         db: Session = Depends(repository.get_db),
-        current_user: schema.TokenData = Depends(auth.get_current_user)
+        token: HTTPAuthorizationCredentials = Depends(token_auth_scheme)
 ):
+    token_data = auth.verify_token(token.credentials, "public")
+    if token_data is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas"
+        )
+
     if password.new_password != password.confirm_password:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Las contraseñas no coinciden")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Las contraseñas no coinciden"
+        )
 
-    hashed_password = repository.get_password_by_id(db, current_user.id)
+    if not verify(password.current_password, repository.get_password_by_id(db, token_data.user_id)):
+        raise (
+            HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="contraseña incorrecta")
+        )
 
-    if not verify(password.current_password, hashed_password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Contraseña actual incorrecta")
+    repository.change_password(db, token_data.user_id, hash(password.new_password))
 
-    hashed_new_password = hash(password.new_password)
-    repository.change_password(db, current_user.id, hashed_new_password)
 
-    return {"message": "Contraseña actualizada correctamente"}
+@router.post("/logout", status_code=status.HTTP_200_OK)
+def logout(
+        token: HTTPAuthorizationCredentials = Depends(token_auth_scheme),
+        db: Session = Depends(repository.get_db),
+
+):
+    token_data = auth.verify_token(token.credentials, "public")
+    if token_data is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas")
+
+    return repository.deactivate_token(db, token_data.user_id)
