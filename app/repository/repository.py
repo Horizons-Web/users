@@ -2,9 +2,9 @@ from typing import TYPE_CHECKING
 from sqlalchemy.orm import Session
 from datetime import datetime
 
-from ..db_config import database
-from ..models import models
-from ..schema import schema
+from app.db_config import database
+from app.models import models
+from app.schema import schema
 
 if TYPE_CHECKING:
     from sqlalchemy.orm import Session

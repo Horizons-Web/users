@@ -1,10 +1,10 @@
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
-from fastapi import  status, HTTPException
+from fastapi import status, HTTPException
 from fastapi.security import HTTPBearer
 
-from ..schema import schema
-from ..config import settings
+from app.schema import schema
+from app.config import settings
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM

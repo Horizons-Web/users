@@ -3,11 +3,11 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from datetime import timedelta
 
-from ..auth import auth
-from ..schema import schema
-from ..utils.utils import hash, verify
-from ..utils.email import send_confirmation_email, create_confirmation_token, decode_token
-from ..repository import repository
+from app.auth import auth
+from app.schema import schema
+from app.utils.utils import hash, verify
+from app.utils.email import send_confirmation_email, create_confirmation_token, decode_token
+from app.repository import repository
 
 token_auth_scheme = HTTPBearer()
 

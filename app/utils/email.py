@@ -4,7 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 
-from ..config import settings
+from app.config import settings
 
 
 smtp_server = settings.SMTP_SERVER

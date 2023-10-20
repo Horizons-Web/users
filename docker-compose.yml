@@ -1,0 +1,19 @@
+version: '3.1'
+services:
+  users-ms:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - users-db
+    command: ["./wait-for-it.sh", "postgres:5432", "--", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+  users-db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: trippi
+      POSTGRES_DB: users
+
+    ports:
+      - "5432:5432"
+    #command: ["psql", "-U", "trippi"]
