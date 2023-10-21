@@ -17,6 +17,13 @@ router = APIRouter(
 )
 
 
+@router.get(
+    "/test", status_code=status.HTTP_200_OK
+)
+def test():
+    return {"message":"Hola desde users!"}
+
+
 @router.post(
     "/login", status_code=status.HTTP_200_OK
 )
