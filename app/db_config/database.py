@@ -1,14 +1,17 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import os
+
 
 from app.config import settings
 
 from app.models.models import Base
 
-SQLALCHEMY_DATABASE_URL = f'postgresql://{settings.DATABASE_USERNAME}:{settings.DATABASE_PASSWORD}@{settings.DATABASE_HOSTNAME}:{settings.DATABASE_PORT}/{settings.DATABASE_NAME}'
+DATABASE_URI = os.getenv('DATABASE_URI_USERS')
 
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = create_engine(DATABASE_URI)
+
 
 
 Base.metadata.create_all(bind=engine)
