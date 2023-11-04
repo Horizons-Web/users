@@ -21,13 +21,15 @@ router = APIRouter(
     "/test", status_code=status.HTTP_200_OK
 )
 def test():
-    return {"message":"Hola desde users!"}
+    return {"message": "Hola desde users!"}
 
 
 @router.post(
     "/login", status_code=status.HTTP_200_OK
 )
-def login(user_credentials: schema.Login, db: Session = Depends(repository.get_db)):
+def login(
+        user_credentials: schema.Login, db: Session = Depends(repository.get_db)
+):
     user = repository.get_user_by_username(db, user_credentials.username)
     if user is None:
         raise (
@@ -42,14 +44,9 @@ def login(user_credentials: schema.Login, db: Session = Depends(repository.get_d
             HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Credenciales incorrectas")
         )
 
-    token = schema.TokenData(
-        user_id=user.id,
-        role=user.user_type,
-    )
-
     token_update = repository.get_token_by_user_id(db, user.id)
 
-    token = auth.create_access_token(token)
+    token = auth.create_access_token(user.id, user.user_type)
 
     if token_update is None:
         return repository.create_token(db, token).token
@@ -58,9 +55,11 @@ def login(user_credentials: schema.Login, db: Session = Depends(repository.get_d
 
 
 @router.post(
-    "/signup", status_code=status.HTTP_201_CREATED, response_model=schema.ClientCreated
+    "/signup-client", status_code=status.HTTP_201_CREATED, response_model=schema.UserCreated
 )
-def create_client(client_create: schema.ClientCreate, db: Session = Depends(repository.get_db)):
+def create_client(
+        client_create: schema.ClientCreate, db: Session = Depends(repository.get_db)
+):
     username = repository.get_user_by_username(db, client_create.username)
     if username is not None:
         raise (
@@ -91,8 +90,42 @@ def create_client(client_create: schema.ClientCreate, db: Session = Depends(repo
     return repository.create_client(db, client_create)
 
 
+@router.post(
+    "/signup-guide", status_code=status.HTTP_201_CREATED, response_model=schema.UserCreated
+)
+def create_guide(
+        guide_create: schema.GuideCreate,
+        db: Session = Depends(repository.get_db)
+):
+    username = repository.get_user_by_username(db, guide_create.username)
+    if username is not None:
+        raise (
+            HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Ya existe un usuario con este nombre")
+        )
+
+    email = repository.get_user_by_email(db, guide_create.email)
+    if email is not None:
+        raise (
+            HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Ya existe un usuario con este email")
+        )
+
+    hashed_password = hash(guide_create.password)
+    guide_create.password = hashed_password
+
+    confirmation_token = create_confirmation_token(
+        data={"email": guide_create.email},
+        expires_delta=timedelta(hours=24)
+    )
+    send_confirmation_email(guide_create.email, confirmation_token)
+
+    return repository.create_guide(db, guide_create)
+
+
 @router.get("/confirm/", status_code=status.HTTP_200_OK)
-def confirm_user(token: str, db: Session = Depends(repository.get_db)):
+def confirm_user(
+        token: str,
+        db: Session = Depends(repository.get_db)
+):
     payload = decode_token(token)
     if payload is None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired token")
@@ -110,6 +143,10 @@ def change_password(
         db: Session = Depends(repository.get_db),
         token: HTTPAuthorizationCredentials = Depends(token_auth_scheme)
 ):
+    if repository.get_token_by_token(db, token.credentials) is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas"
+        )
     token_data = auth.verify_token(token.credentials, "public")
     if token_data is None:
         raise HTTPException(
@@ -137,6 +174,28 @@ def logout(
 ):
     token_data = auth.verify_token(token.credentials, "public")
     if token_data is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas"
+        )
 
     return repository.deactivate_token(db, token_data.user_id)
+
+
+@router.post("/auth", status_code=status.HTTP_200_OK)
+def authenticate(
+        token: str,
+        role_request: str,
+        db: Session = Depends(repository.get_db)
+):
+    token_db = repository.get_token_by_token(db,token)
+    if token_db is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas"
+        )
+
+    if token_db is False:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas"
+        )
+
+    return auth.verify_token(token, role_request)

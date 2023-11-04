@@ -97,6 +97,49 @@ def create_client(db: Session, client_create: schema.ClientCreate):
     return response
 
 
+def create_guide(db: Session, guide_create: schema.GuideCreate):
+    address = models.Address(
+        country=guide_create.country,
+        administrative_area_level_1=guide_create.administrative_area_level_1,
+        locality=guide_create.locality,
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow(),
+    )
+    db.add(address)
+    db.flush()
+
+    user = models.Users(
+        username=guide_create.username,
+        email=guide_create.email,
+        password=guide_create.password,
+        user_type="guide",
+        address_id=address.id,
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow(),
+    )
+    db.add(user)
+    db.flush()
+
+    guide = models.Guide(
+        dni=guide_create.dni,
+        user_id=user.id,
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow(),
+    )
+    db.add(guide)
+
+    db.commit()
+
+    response = {
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "created_at": user.created_at,
+    }
+
+    return response
+
+
 def deactivate_user(db: Session, user_id: int):
     user = db.query(models.Users).filter(models.Users.id == user_id).first()
     if user:
@@ -150,7 +193,7 @@ def update_token(db: Session, token: schema.TokenData):
         existing_token.updated_at = datetime.utcnow()
     db.commit()
 
-    return existing_token
+    return existing_tokenA
 
 
 def get_token_by_user_id(db: Session, user_id: int):
@@ -164,3 +207,9 @@ def deactivate_token(db: Session, user_id: int):
     if token:
         token.is_active = False
         db.commit()
+
+
+def get_token_by_token(db: Session, token: str):
+    token_db = db.query(models.Token).filter(models.Token.token == token).first()
+    if token_db:
+        return token_db.is_active

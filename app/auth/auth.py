@@ -13,15 +13,25 @@ ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 token_auth_scheme = HTTPBearer()
 
 
-def create_access_token(data: schema.TokenData):
+def create_access_token(user_id: int, user_type: str):
     exp = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode = data.dict()
-    to_encode["expiration_date"] = str(exp)
-    to_encode["is_active"] = True
+
+    to_encode = {
+        "token": "",
+        "expiration_date": str(exp),
+        "is_active": True,
+        "user_id": user_id,
+        "role": user_type
+    }
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-    data.token = encoded_jwt
-    data.expiration_date = exp
+    data = schema.TokenData(
+        token=encoded_jwt,
+        expiration_date=str(exp),
+        is_active=True,
+        user_id=user_id,
+        role=user_type
+    )
 
     return data
 

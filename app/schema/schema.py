@@ -9,11 +9,16 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    token: Optional[str]
-    role: Optional[str]
-    expiration_date: Optional[datetime]
-    is_active: Optional[bool]
-    user_id: Optional[int]
+    token: str
+    expiration_date: str
+    is_active: bool
+    user_id: int
+    role: str
+
+
+class TokenCreate(BaseModel):
+    user_id: int
+    role: str
 
 
 class ClientCreate(BaseModel):
@@ -27,7 +32,17 @@ class ClientCreate(BaseModel):
     locality: str
 
 
-class ClientCreated(BaseModel):
+class GuideCreate(BaseModel):
+    username: str
+    email: str
+    password: str
+    dni: str
+    country: str
+    administrative_area_level_1: str
+    locality: str
+
+
+class UserCreated(BaseModel):
     id: int
     username: str
     email: str

@@ -22,12 +22,11 @@ def send_confirmation_email(email: str, confirmation_token: str):
     to_address = email
     subject = "Confirma tu cuenta"
 
-    # Crear un objeto MIMEText con el contenido HTML
-    html_content = (f"Click <a href='http://127.0.0.1:8000/api/users/confirm/?token={confirmation_token}'>here</a> to "
+    link = settings.USERS_LOCALHOST + "api/users/confirm/?token=" + confirmation_token
+    html_content = (f"Click <a href={link}>here</a> to "
                     f"confirm your registration.")
     html_message = MIMEText(html_content, "html")
 
-    # Crear un objeto MIMEMultipart para combinar texto y HTML
     msg = MIMEMultipart()
     msg.attach(html_message)
 
@@ -44,8 +43,6 @@ def send_confirmation_email(email: str, confirmation_token: str):
         smtp.login(from_address, password)
 
         smtp.sendmail(from_address, to_address, msg.as_string())
-
-        print("El correo se ha enviado con éxito.")
 
     except Exception as e:
         print("Hubo un error al enviar el correo:", str(e))

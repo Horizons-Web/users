@@ -1,4 +1,3 @@
-from pydantic_settings import BaseSettings
 import os
 
 
@@ -12,5 +11,8 @@ class Settings:
     PASSWORD_EMAIL = os.getenv("PASSWORD_EMAIL")
     SECRET_KEY_EMAIL = os.getenv("SECRET_KEY_EMAIL")
     ALGORITHM_EMAIL = os.getenv("ALGORITHM_EMAIL")
+    DATABASE_URI_USERS = os.getenv("DATABASE_URI_USERS")
+    USERS_LOCALHOST = os.getenv("USERS_LOCALHOST")
+
 
 settings = Settings()

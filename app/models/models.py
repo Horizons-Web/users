@@ -41,6 +41,7 @@ class Users(Base):
     address_id = Column(Integer, ForeignKey('address.id'))
     address = relationship("Address", back_populates="users")
     client = relationship("Client", back_populates="users")
+    guide = relationship("Guide", back_populates="users")
     token = relationship("Token", back_populates="users")
 
 
@@ -55,6 +56,18 @@ class Client(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
 
     users = relationship("Users", back_populates="client")
+
+
+class Guide(Base):
+    __tablename__ = 'guide'
+
+    id = Column(Integer, primary_key=True, index=True)
+    dni = Column(String, unique=True, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'))
+
+    users = relationship("Users", back_populates="guide")
 
 
 class Token(Base):
