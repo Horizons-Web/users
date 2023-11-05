@@ -193,7 +193,7 @@ def update_token(db: Session, token: schema.TokenData):
         existing_token.updated_at = datetime.utcnow()
     db.commit()
 
-    return existing_tokenA
+    return existing_token
 
 
 def get_token_by_user_id(db: Session, user_id: int):

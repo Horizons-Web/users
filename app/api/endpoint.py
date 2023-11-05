@@ -37,8 +37,7 @@ def login(
         )
 
     hashed_password = repository.get_password_by_username(db, user_credentials.username)
-    print(user_credentials.password)
-    print(hashed_password)
+    
     if not verify(user_credentials.password, hashed_password):
         raise (
             HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Credenciales incorrectas")
@@ -183,19 +182,18 @@ def logout(
 
 @router.post("/auth", status_code=status.HTTP_200_OK)
 def authenticate(
-        token: str,
-        role_request: str,
+        auth_request: schema.Auth,
         db: Session = Depends(repository.get_db)
 ):
-    token_db = repository.get_token_by_token(db,token)
+    token_db = repository.get_token_by_token(db,auth_request.token)
     if token_db is None:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas no esta en la db"
         )
 
     if token_db is False:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas token desactivo"
         )
 
-    return auth.verify_token(token, role_request)
+    return auth.verify_token(auth_request.token, auth_request.role_request)

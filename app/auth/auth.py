@@ -14,10 +14,10 @@ token_auth_scheme = HTTPBearer()
 
 
 def create_access_token(user_id: int, user_type: str):
+
     exp = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
     to_encode = {
-        "token": "",
         "expiration_date": str(exp),
         "is_active": True,
         "user_id": user_id,
@@ -60,13 +60,12 @@ def verify_token(token: str, role_request: str):
         if expiration_date < datetime.utcnow():
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="El token expiro")
         if not is_active:
-            print(payload.get("is_active"))
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token invalido")
         if not verify_role(role, role_request):
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No posees los permisos requeridos")
 
         token_data = schema.TokenData(
-            token=payload.get("token"),
+            token=token,
             role=payload.get("role"),
             expiration_date=payload.get("expiration_date"),
             is_active=payload.get("is_active"),
