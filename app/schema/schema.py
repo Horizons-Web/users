@@ -59,6 +59,7 @@ class Login(BaseModel):
     username: str
     password: str
 
+
 class Auth(BaseModel):
     token: str
     role_request: str

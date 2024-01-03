@@ -12,3 +12,5 @@ cryptography
 python-multipart
 pydantic-settings
 SQLAlchemy-Utils
+jose
+pydantic

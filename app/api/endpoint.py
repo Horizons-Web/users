@@ -17,13 +17,6 @@ router = APIRouter(
 )
 
 
-@router.get(
-    "/test", status_code=status.HTTP_200_OK
-)
-def test():
-    return {"message": "Hola desde users!"}
-
-
 @router.post(
     "/login", status_code=status.HTTP_200_OK
 )
@@ -33,14 +26,14 @@ def login(
     user = repository.get_user_by_username(db, user_credentials.username)
     if user is None:
         raise (
-            HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Credenciales incorrectas")
+            HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid credentials")
         )
 
     hashed_password = repository.get_password_by_username(db, user_credentials.username)
     
     if not verify(user_credentials.password, hashed_password):
         raise (
-            HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Credenciales incorrectas")
+            HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid credentials")
         )
 
     token_update = repository.get_token_by_user_id(db, user.id)
@@ -62,19 +55,19 @@ def create_client(
     username = repository.get_user_by_username(db, client_create.username)
     if username is not None:
         raise (
-            HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Ya existe un usuario con este nombre")
+            HTTPException(status_code=status.HTTP_409_CONFLICT, detail="There is already a user with this name")
         )
 
     email = repository.get_user_by_email(db, client_create.email)
     if email is not None:
         raise (
-            HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Ya existe un usuario con este email")
+            HTTPException(status_code=status.HTTP_409_CONFLICT, detail="There is already a user with this email")
         )
 
     dni = repository.get_client_by_dni(db, client_create.dni)
     if dni is not None:
         raise (
-            HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Ya existe un usuario con este dni")
+            HTTPException(status_code=status.HTTP_409_CONFLICT, detail="There is already a user with this DNI")
         )
 
     hashed_password = hash(client_create.password)
@@ -99,13 +92,13 @@ def create_guide(
     username = repository.get_user_by_username(db, guide_create.username)
     if username is not None:
         raise (
-            HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Ya existe un usuario con este nombre")
+            HTTPException(status_code=status.HTTP_409_CONFLICT, detail="There is already a user with this name")
         )
 
     email = repository.get_user_by_email(db, guide_create.email)
     if email is not None:
         raise (
-            HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Ya existe un usuario con este email")
+            HTTPException(status_code=status.HTTP_409_CONFLICT, detail="There is already a user with this email")
         )
 
     hashed_password = hash(guide_create.password)
@@ -144,22 +137,22 @@ def change_password(
 ):
     if repository.get_token_by_token(db, token.credentials) is None:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
         )
     token_data = auth.verify_token(token.credentials, "public")
     if token_data is None:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
         )
 
     if password.new_password != password.confirm_password:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Las contraseñas no coinciden"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords not match"
         )
 
     if not verify(password.current_password, repository.get_password_by_id(db, token_data.user_id)):
         raise (
-            HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="contraseña incorrecta")
+            HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid password")
         )
 
     repository.change_password(db, token_data.user_id, hash(password.new_password))
@@ -174,7 +167,7 @@ def logout(
     token_data = auth.verify_token(token.credentials, "public")
     if token_data is None:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
         )
 
     return repository.deactivate_token(db, token_data.user_id)
@@ -185,15 +178,15 @@ def authenticate(
         auth_request: schema.Auth,
         db: Session = Depends(repository.get_db)
 ):
-    token_db = repository.get_token_by_token(db,auth_request.token)
+    token_db = repository.get_token_by_token(db, auth_request.token)
     if token_db is None:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas no esta en la db"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
         )
 
     if token_db is False:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas token desactivo"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Token deactivated"
         )
 
     return auth.verify_token(auth_request.token, auth_request.role_request)
