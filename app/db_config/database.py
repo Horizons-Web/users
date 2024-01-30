@@ -5,7 +5,9 @@ from app.config import settings
 
 from app.models.models import Base
 
-DATABASE_URI = settings.DATABASE_URI_USERS
+
+DATABASE_URI = settings.DATABASE_URI
+
 engine = create_engine(DATABASE_URI)
 Base.metadata.create_all(bind=engine)
 

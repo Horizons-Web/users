@@ -42,13 +42,6 @@ class GuideCreate(BaseModel):
     locality: str
 
 
-class UserCreated(BaseModel):
-    id: int
-    username: str
-    email: str
-    created_at: datetime
-
-
 class ChangePassword(BaseModel):
     current_password: str
     new_password: str
