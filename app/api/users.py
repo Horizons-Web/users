@@ -45,7 +45,7 @@ def create_guide(guide_create: schema.GuideCreate, db: Session = Depends(reposit
     return response
 
 
-@router.get("/confirm/", status_code=status.HTTP_200_OK)
+@router.get("/confirm/{token}", status_code=status.HTTP_200_OK)
 def confirm_user(token: str, db: Session = Depends(repository.get_db)):
     '''
     Confirma la cuenta de usuarios

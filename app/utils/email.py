@@ -22,7 +22,7 @@ def send_confirmation_email(email: str, confirmation_token: str):
     to_address = email
     subject = "Confirma tu cuenta"
 
-    link = settings.USERS_LOCALHOST + "api/confirm/?token=" + confirmation_token
+    link = settings.USERS_LOCALHOST + "api/confirm/" + confirmation_token
     html_content = (f"Click <a href={link}>here</a> to "
                     f"confirm your registration.")
     html_message = MIMEText(html_content, "html")
