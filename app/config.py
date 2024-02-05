@@ -1,4 +1,49 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
+import sentry_sdk
+
+from fastapi_mail import ConnectionConfig
+
 import os
+
+
+def configure_cors(app: FastAPI):
+    origins = [
+        "http://localhost:8080",
+    ]
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+
+def configure_sentry(app: FastAPI):
+    sentry_sdk.init(
+        dsn=Settings.DSN_SENTRY,
+        traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
+    )
+    app.add_middleware(SentryAsgiMiddleware)
+
+
+def configure_mail():
+    conf = ConnectionConfig(
+        MAIL_USERNAME=settings.EMAIL_ADDRESS,
+        MAIL_PASSWORD=settings.PASSWORD_EMAIL,
+        MAIL_FROM=settings.EMAIL_ADDRESS,
+        MAIL_PORT=settings.SMTP_PORT,
+        MAIL_SERVER=settings.SMTP_SERVER,
+        MAIL_STARTTLS=False,
+        MAIL_SSL_TLS=True,
+        USE_CREDENTIALS=True,
+        VALIDATE_CERTS=True
+    )
+    return conf
 
 
 class Settings:
@@ -13,6 +58,7 @@ class Settings:
     ALGORITHM_EMAIL = os.getenv("ALGORITHM_EMAIL")
     DATABASE_URI = os.getenv("DATABASE_URI")
     USERS_LOCALHOST = os.getenv("USERS_LOCALHOST")
+    DSN_SENTRY = os.getenv("DSN_SENTRY")
 
 
 settings = Settings()

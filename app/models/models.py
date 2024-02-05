@@ -1,85 +1,67 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Boolean
+import uuid
+
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Boolean, Enum
 from sqlalchemy.orm import relationship
-from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.dialects.postgresql import UUID
+
+from datetime import datetime
 
 Base = declarative_base()
 
 
-class Address(Base):
+class TimeStampUUIDMixin:
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+
+
+class Address(Base, TimeStampUUIDMixin):
     __tablename__ = 'address'
 
-    id = Column(Integer, primary_key=True, index=True)
-    lat = Column(Float)
-    lng = Column(Float)
     country = Column(String, nullable=False)
     administrative_area_level_1 = Column(String, nullable=False)
     administrative_area_level_2 = Column(String)
     locality = Column(String, nullable=False)
-    postal_code = Column(String)
-    street = Column(String)
-    street_number = Column(String)
+    postal_code = Column(String, nullable=False)
     place_id = Column(String, unique=True)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
-
-    users = relationship("Users", back_populates="address")
 
 
-class Users(Base):
+class Users(Base, TimeStampUUIDMixin):
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, index=True, unique=True, nullable=False)
-    email = Column(String, unique=True, index=True, nullable=False)
-    password = Column(String, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
-    is_active = Column(Boolean, default=False, nullable=False)
-    user_type = Column(String, nullable=False)
-
-    address_id = Column(Integer, ForeignKey('address.id'))
-    address = relationship("Address", back_populates="users")
+    address_id = Column(UUID(as_uuid=True), ForeignKey('address.id'), nullable=True)
     client = relationship("Client", back_populates="users")
     guide = relationship("Guide", back_populates="users")
     token = relationship("Token", back_populates="users")
 
+    username = Column(String, index=True, unique=True, nullable=False)
+    email = Column(String, unique=True, index=True, nullable=False)
+    password = Column(String, nullable=False)
+    user_type = Column(Enum('guide', 'client', 'admin', name='user_type'), nullable=False)
 
-class Client(Base):
+
+class Client(Base, TimeStampUUIDMixin):
     __tablename__ = 'client'
 
-    id = Column(Integer, primary_key=True, index=True)
-    dni = Column(String, unique=True, index=True)
-    physical_level = Column(Integer)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'))
-
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), unique=True)
     users = relationship("Users", back_populates="client")
 
 
-class Guide(Base):
+class Guide(Base, TimeStampUUIDMixin):
     __tablename__ = 'guide'
 
-    id = Column(Integer, primary_key=True, index=True)
-    dni = Column(String, unique=True, index=True)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'))
-
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), unique=True)
     users = relationship("Users", back_populates="guide")
 
 
-class Token(Base):
+class Token(Base, TimeStampUUIDMixin):
     __tablename__ = 'token'
 
-    id = Column(Integer, primary_key=True, index=True)
-    token = Column(String, nullable=False, unique=True)
-    role = Column(String, nullable=False)
-    expiration_date = Column(DateTime, default=datetime.utcnow(), nullable=False)
-    is_active = Column(Boolean, default=False, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'), unique=True)
-
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'))
     users = relationship("Users", back_populates="token")
+
+    token = Column(String, nullable=False, unique=True)
+    role = Column(Enum('guide', 'client', name='role', nullable=False))
+    expiration_date = Column(DateTime, default=datetime.utcnow(), nullable=False)
