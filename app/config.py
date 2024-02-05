@@ -58,7 +58,7 @@ class Settings:
     ALGORITHM_EMAIL = os.getenv("ALGORITHM_EMAIL")
     DATABASE_URI = os.getenv("DATABASE_URI")
     USERS_LOCALHOST = os.getenv("USERS_LOCALHOST")
-    DSN_SENTRY = os.getenv("DSN_SENTRY")
+    DSN_SENTRY = os.getenv("DSN_SENTRY_USERS")
 
 
 settings = Settings()

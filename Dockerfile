@@ -13,4 +13,3 @@ RUN set -eux \
     && rm -rf requirements.txt
 
 COPY . .
-
