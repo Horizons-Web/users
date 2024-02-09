@@ -19,7 +19,7 @@ jobs:
       run: docker build . --file Dockerfile --tag users:latest
       
     - name: Log in to Docker Hub
-      run: echo "$DOCKER_PASSWORD" | DOCKER LOGIN -u "$DOCKER_USERNAME" --password-stdin
+      run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       
     - name: Push image to Docker Hub
       run: docker push users:latest
