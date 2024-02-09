@@ -3,7 +3,7 @@ name: Publish Docker Image
 on:
   push:
     branches:
-      - main  # Cambia esto por la rama en la que deseas que se active el flujo
+      - main
 
 jobs:
   build-and-push:
@@ -20,5 +20,5 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t joaquinreyero12/users:$GITHUB_SHA .
-          docker push joaquinreyero12/users:$GITHUB_SHA
+          docker build -t joaquinreyero12/users:latest .
+          docker push joaquinreyero12/users:latest
