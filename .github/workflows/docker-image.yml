@@ -6,8 +6,8 @@ on:
       - "main"
 
 env:
-  TEST_TAG: user/app:test
-  LATEST_TAG: user/app:latest
+  TEST_TAG: users:test
+  LATEST_TAG: users:latest
 
 jobs:
   docker:
