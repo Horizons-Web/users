@@ -22,3 +22,11 @@ jobs:
         run: |
           docker build -t joaquinreyero12/users:latest .
           docker push joaquinreyero12/users:latest
+
+      - name: Deploy to Google Cloud Run
+        uses: google-github-actions/deploy-cloudrun@main
+        with:
+          service: users
+          image: joaquinreyero12/users:latest
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          credentials: ${{ secrets.GCP_SA_KEY }}
