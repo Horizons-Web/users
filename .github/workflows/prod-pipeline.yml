@@ -51,4 +51,7 @@ jobs:
             PASSWORD_EMAIL = ${{ secrets.PASSWORD_EMAIL }}
             SECRET_KEY_EMAIL = ${{ secrets.SECRET_KEY_EMAIL }}
             ALGORITHM_EMAIL = ${{ secrets.ALGORITHM_EMAIL }}
+            
+      - name: Allow all
+        run: gcloud run deploy users ... --allow-unauthenticated
         
