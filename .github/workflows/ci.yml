@@ -1,4 +1,4 @@
-name: Publish Docker Image
+name: CI Pipeline
 
 on:
   push:
@@ -34,5 +34,6 @@ jobs:
           image: 'joaquinreyero12/users:latest'
           service: 'users'
           flags: '--add-cloudsql-instances=crested-primacy-413823:us-central1:users'
-      
+          env_vars: |
+            test=test      
       
