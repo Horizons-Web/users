@@ -53,5 +53,5 @@ jobs:
             ALGORITHM_EMAIL = ${{ secrets.ALGORITHM_EMAIL }}
             
       - name: Allow all
-        run: gcloud run deploy users ... --allow-unauthenticated
+        run: gcloud run deploy users --allow-unauthenticated
         
