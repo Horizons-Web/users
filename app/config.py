@@ -64,5 +64,7 @@ class Settings:
     DATABASE_URI = "postgresql://joaquin:rootroot@/users-dev?host=/cloudsql/crested-primacy-413823:us-central1:users"
     #USERS_LOCALHOST = os.getenv("USERS_LOCALHOST")
     DSN_SENTRY = "https://31ca75b4272c073024fbd9ee92fc5173@o4506679202283520.ingest.sentry.io/4506694083674112"
-
+    TEST = os.getenv("test")
+    print(TEST)
+    
 settings = Settings()
