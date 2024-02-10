@@ -18,10 +18,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Generate Image Tag
+        id: tag
+        run: echo "::set-output name=tag::$(git log --pretty=format:'%h' -n 1)"
+
       - name: Build and Push Docker Image
         run: |
-          docker build -t joaquinreyero12/users:latest .
-          docker push joaquinreyero12/users:latest
+          docker build -t joaquinreyero12/users:${{ steps.tag.outputs.tag }} .
+          docker push joaquinreyero12/users:${{ steps.tag.outputs.tag }}
 
       - name: Authenticate with Google Cloud Platform
         uses: google-github-actions/auth@v2
@@ -31,7 +35,7 @@ jobs:
       - name: Deploy On Google  
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
-          image: 'joaquinreyero12/users:latest'
+          image: 'joaquinreyero12/users:${{ steps.tag.outputs.tag }}'
           service: 'users'
           flags: '--add-cloudsql-instances=crested-primacy-413823:us-central1:users'
           env_vars: |
