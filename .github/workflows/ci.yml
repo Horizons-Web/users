@@ -26,20 +26,13 @@ jobs:
       - name: Authenticate with Google Cloud Platform
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-
-      - name: Deploy to Google Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v2
+          credentials_json: ${{ secrets.GCP_SA_KEY }
+  
+      - name: Deploy On Google  
+        uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
-          service: users
-          image: joaquinreyero12/users:latest
-          region: us-central1
-          skip_default_labels: false
-          no_traffic: false
-          additional_flags: |
-            --add-cloudsql-instances=crested-primacy-413823:us-central1:users
-            --allow-unauthenticated
-            --platform=managed
+          image: 'joaquinreyero12/users:latest'
+          service: 'hello-cloud-run'
+          flags: '--add-cloudsql-instances=crested-primacy-413823:us-central1:users'
       
       
