@@ -37,7 +37,7 @@ jobs:
         with:
           image: 'joaquinreyero12/users:${{ steps.tag.outputs.tag }}'
           service: 'users'
-          flags: '--add-cloudsql-instances=crested-primacy-413823:us-central1:users'
+          flags: '--add-cloudsql-instances=crested-primacy-413823:us-central1:users --ingress=all'
           env_vars: |
             ENVIRONMENT = ${{ secrets.ENVIRONMENT }}
             DATABASE_URI = ${{ secrets.DATABASE_URI }}
@@ -51,7 +51,5 @@ jobs:
             PASSWORD_EMAIL = ${{ secrets.PASSWORD_EMAIL }}
             SECRET_KEY_EMAIL = ${{ secrets.SECRET_KEY_EMAIL }}
             ALGORITHM_EMAIL = ${{ secrets.ALGORITHM_EMAIL }}
-            
-      - name: Allow all
-        run: gcloud run deploy users --image:joaquinreyero12/users:${{ steps.tag.outputs.tag }} --allow-unauthenticated
+        
         
