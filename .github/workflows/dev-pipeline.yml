@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: Developer CI
 
 on:
   push:
