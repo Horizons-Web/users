@@ -32,7 +32,7 @@ jobs:
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
           image: 'joaquinreyero12/users:latest'
-          service: 'hello-cloud-run'
+          service: 'users'
           flags: '--add-cloudsql-instances=crested-primacy-413823:us-central1:users'
       
       
