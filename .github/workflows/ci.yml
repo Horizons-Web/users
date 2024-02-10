@@ -30,13 +30,13 @@ jobs:
 
 
       - name: Deploy to Google Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v1
+        uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: users
           image: joaquinreyero12/users:latest
           region: us-central1
           skip_default_labels: false
           no_traffic: false
-          additional_flags: --add-cloudsql-instances=$CONNECTION_NAME --allow-unauthenticated --platform=managed
+          additional_flags: --add-cloudsql-instances=${{ secrets.CONNECTION_NAME }} --allow-unauthenticated --platform=managed
       
       
