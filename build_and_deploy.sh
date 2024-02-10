@@ -5,11 +5,11 @@ export REGION=us-east1
 export CONNECTION_NAME=crested-primacy-413823:us-central1:users
 
 gcloud builds submit \
-  --tag gcr.io/$PROJECT_ID/poll \
+  --tag gcr.io/$PROJECT_ID/users \
   --project $PROJECT_ID
 
 gcloud run deploy users \
-  --image gcr.io/$PROJECT_ID/poll \
+  --image gcr.io/$PROJECT_ID/users \
   --platform managed \
   --region $REGION \
   --allow-unauthenticated \

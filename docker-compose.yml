@@ -1,0 +1,25 @@
+services:
+  users:
+    restart: always
+    env_file: 
+      - .env
+    environment:
+      DSN_SENTRY_USERS: ${DSN_SENTRY}
+
+      DATABASE_URI: ${DATABASE_URI}
+
+      SECRET_KEY: ${SECRET_KEY}
+      ALGORITHM: ${ALGORITHM}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+
+      SMTP_SERVER: ${SMTP_SERVER}
+      SMTP_PORT: ${SMTP_PORT}
+      EMAIL_ADDRESS: ${EMAIL_ADDRESS}
+      PASSWORD_EMAIL: ${PASSWORD_EMAIL}
+      SECRET_KEY_EMAIL: ${SECRET_KEY_EMAIL}
+      ALGORITHM_EMAIL: ${ALGORITHM_EMAIL}
+    build:
+        context: .
+        dockerfile: Dockerfile
+    ports:
+      - 8001:8080

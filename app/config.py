@@ -48,23 +48,24 @@ def configure_mail():
 
 
 class Settings:
-    #DATABASE_USER = "joaquin"
-    #DATABASE_NAME = "users-db"
-    #DATABASE_PASSWORD = "rootroot"
-    #DATABASE_UNIX_SOCKET_PATH = "/cloudsql/crested-primacy-413823:us-central1:users"
-    #SECRET_KEY = os.getenv("SECRET_KEY")
-    #ALGORITHM = os.getenv("ALGORITHM")
-    #ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
-    SMTP_SERVER = "indanet2.ferozo.com"
-    SMTP_PORT = int(465)
-    EMAIL_ADDRESS = "joaquinreyero@globaltechsrl.com.ar"
-    PASSWORD_EMAIL = "Gurumiguel@2023"
-    #SECRET_KEY_EMAIL = os.getenv("SECRET_KEY_EMAIL")
-    #ALGORITHM_EMAIL = os.getenv("ALGORITHM_EMAIL")
-    DATABASE_URI = "postgresql://joaquin:rootroot@/users-dev?host=/cloudsql/crested-primacy-413823:us-central1:users"
-    #USERS_LOCALHOST = os.getenv("USERS_LOCALHOST")
-    DSN_SENTRY = "https://31ca75b4272c073024fbd9ee92fc5173@o4506679202283520.ingest.sentry.io/4506694083674112"
-    TEST = os.getenv("test")
-    print(TEST)
-    
+
+    if os.getenv("ENVIRONMENT") == "dev-local":
+        DATABASE_URI = os.getenv("DATABASE_URI_LOCAL")
+    else:
+        DATABASE_URI = os.getenv("DATABASE_URI")
+
+    DSN_SENTRY = os.getenv("DSN_SENTRY")
+
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    ALGORITHM = os.getenv("ALGORITHM")
+    ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+
+    SMTP_SERVER = os.getenv("SMTP_SERVER")
+    SMTP_PORT = int(os.getenv("SMTP_PORT"))
+    EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
+    PASSWORD_EMAIL = os.getenv("PASSWORD_EMAIL")
+    SECRET_KEY_EMAIL = os.getenv("SECRET_KEY_EMAIL")
+    ALGORITHM_EMAIL = os.getenv("ALGORITHM_EMAIL")
+
+
 settings = Settings()
