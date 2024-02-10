@@ -35,9 +35,9 @@ jobs:
           service: 'users'
           flags: '--add-cloudsql-instances=crested-primacy-413823:us-central1:users'
           env_vars: |
-            DSN_SENTRY = ${{ secrets.DSN_SENTRY }}
+            ENVIRONMENT = ${{ secrets.ENVIRONMENT }}
             DATABASE_URI = ${{ secrets.DATABASE_URI }}
-            USERS_HOST = ${{ secrets.USERS_HOST }}
+            DSN_SENTRY = ${{ secrets.DSN_SENTRY }}
             SECRET_KEY = ${{ secrets.SECRET_KEY }}
             ALGORITHM = ${{ secrets.ALGORITHM }}
             ACCESS_TOKEN_EXPIRE_MINUTES = ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
@@ -47,5 +47,4 @@ jobs:
             PASSWORD_EMAIL = ${{ secrets.PASSWORD_EMAIL }}
             SECRET_KEY_EMAIL = ${{ secrets.SECRET_KEY_EMAIL }}
             ALGORITHM_EMAIL = ${{ secrets.ALGORITHM_EMAIL }}
-            ENVIRONMENT = ${{ secrets.ENVIRONMENT }}
         
