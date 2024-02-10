@@ -37,6 +37,6 @@ jobs:
           region: us-central1
           skip_default_labels: false
           no_traffic: false
-          additional_flags: --add-cloudsql-instances=${{ secrets.CONNECTION_NAME }} --allow-unauthenticated --platform=managed
+          additional_flags: --add-cloudsql-instances=crested-primacy-413823:us-central1:users --allow-unauthenticated --platform=managed
       
       
