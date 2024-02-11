@@ -4,9 +4,12 @@ services:
     env_file: 
       - .env
     environment:
-      DSN_SENTRY_USERS: ${DSN_SENTRY}
 
-      DATABASE_URI: ${DATABASE_URI}
+      ENVIRONMENT: ${ENVIRONMENT}
+
+      DATABASE_URI_LOCAL: ${DATABASE_URI_LOCAL}
+
+      DSN_SENTRY_USERS: ${DSN_SENTRY}
 
       SECRET_KEY: ${SECRET_KEY}
       ALGORITHM: ${ALGORITHM}
