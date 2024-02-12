@@ -27,7 +27,7 @@ def verify(plain_password, hashed_password):
 async def send_confirmation_email(email: str, confirmation_token: str):
     html = """
     <p>Click on the link to confirm your email</p> 
-    <a href="{0}api/confirm/{1}">Confirm email</a>
+    <a href="{0}/api/confirm/{1}">Confirm email</a>
     """.format(settings.USERS_LOCALHOST, confirmation_token)
     message = MessageSchema(
         subject="Email confirmation",
