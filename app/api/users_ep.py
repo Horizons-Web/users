@@ -1,5 +1,7 @@
 from fastapi import Depends, status, APIRouter
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.responses import RedirectResponse
+
 
 from app.schema import user_schema, token_schema
 from app.service import user_service
@@ -26,8 +28,8 @@ def confirm_user(token: str):
     Confirm user email
     """
     confirmation_response = user_service.confirm_email(token)
-    return confirmation_response
-
+    if confirmation_response:
+        return RedirectResponse(url='https://frontend-3bsgyuggyq-ue.a.run.app/login')
 
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=str)
 def login(user_credentials: user_schema.Login):

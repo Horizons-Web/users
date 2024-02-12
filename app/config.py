@@ -67,5 +67,7 @@ class Settings:
     SECRET_KEY_EMAIL = os.getenv("SECRET_KEY_EMAIL")
     ALGORITHM_EMAIL = os.getenv("ALGORITHM_EMAIL")
 
+    USERS_LOCALHOST = os.getenv("USERS_LOCALHOST")
+
 
 settings = Settings()
