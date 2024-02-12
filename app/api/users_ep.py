@@ -57,6 +57,13 @@ def authenticate(auth_request: token_schema.Auth):
     response = user_service.authenticate(auth_request)
     return response
 
+@router.get("/logout", status_code=status.HTTP_200_OK)
+def logout(token: HTTPAuthorizationCredentials = Depends(token_auth_scheme)):
+    """
+    Logout user
+    """
+    response = user_service.logout(token.credentials)
+    return response
 
 """"
 @router.put("/change-password", status_code=status.HTTP_200_OK)

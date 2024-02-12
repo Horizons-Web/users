@@ -67,19 +67,6 @@ def login(user_credentials: user_schema.Login):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error logging in")
 
 
-def logout(token: str):
-    try:
-        token_data = auth.verify_token(token, "public")
-        repository = user_repository.TokenRepository()
-        repository.update(token_schema.Data(user_id=token_data.user_id, is_active=False))
-        return {"message": "Logged out successfully"}
-
-    except errors.TokenNotFound:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Token not found")
-
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error logging out")
-
 
 def authenticate(auth_request: token_schema.Auth):
     try:
@@ -96,6 +83,19 @@ def authenticate(auth_request: token_schema.Auth):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error authenticating")
 
+
+def logout(token: str):
+    try:
+        token_data = auth.verify_token(token, "public")
+        repository = user_repository.TokenRepository()
+        repository.update(token_schema.Data(user_id=token_data.user_id, is_active=False))
+        return {"message": "Logged out successfully"}
+
+    except errors.TokenNotFound:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Token not found")
+
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error logging out")
 
 """""
 
