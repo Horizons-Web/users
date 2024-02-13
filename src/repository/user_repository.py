@@ -3,10 +3,10 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from contextlib import contextmanager
 
-from app.db_config import database
-from app.models import models
-from app.schema import user_schema, token_schema
-from app.utils import errors
+from src.db_config import database
+from src.models import models
+from src.schema import user_schema, token_schema
+from src.utils import errors
 
 
 def _add_tables():

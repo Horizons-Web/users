@@ -3,11 +3,11 @@ from fastapi import status
 
 from datetime import timedelta
 
-from app.repository import user_repository
-from app.schema import user_schema, token_schema
-from app.utils.utils import _hash, send_confirmation_email, create_confirmation_token, decode_token, verify
-from app.utils import errors
-from app.auth import auth
+from src.repository import user_repository
+from src.schema import user_schema, token_schema
+from src.utils.utils import _hash, send_confirmation_email, create_confirmation_token, decode_token, verify
+from src.utils import errors
+from src.auth import auth
 
 
 async def signup(user: user_schema.CreateRequest):

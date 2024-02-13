@@ -16,3 +16,5 @@ pydantic
 sentry-sdk[fastapi]
 pydantic[email]
 fastapi-mail
+httpx
+pytest

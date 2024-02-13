@@ -5,9 +5,9 @@ from jose import JWTError, jwt
 
 from datetime import datetime, timedelta
 
-from app.schema import token_schema
-from app.config import settings
-from app.utils import errors
+from src.schema import token_schema
+from src.config import settings
+from src.utils import errors
 
 
 token_auth_scheme = HTTPBearer()

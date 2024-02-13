@@ -3,8 +3,8 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.responses import RedirectResponse
 
 
-from app.schema import user_schema, token_schema
-from app.service import user_service
+from src.schema import user_schema, token_schema
+from src.service import user_service
 
 router = APIRouter(
     prefix="/api",
@@ -75,9 +75,6 @@ def change_password(password: schema.ChangePassword, token: HTTPAuthorizationCre
     response = service.change_password(password, token.credentials, db)
 
     return response
-
-
-
 
 
 

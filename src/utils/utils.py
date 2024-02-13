@@ -6,8 +6,8 @@ from passlib.context import CryptContext
 
 from datetime import datetime, timedelta
 
-from app.config import settings, configure_mail
-from app.utils import errors
+from src.config import settings, configure_mail
+from src.utils import errors
 
 smtp_use_ssl = True
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
