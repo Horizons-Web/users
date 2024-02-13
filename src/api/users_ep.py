@@ -64,18 +64,3 @@ def logout(token: HTTPAuthorizationCredentials = Depends(token_auth_scheme)):
     """
     response = user_service.logout(token.credentials)
     return response
-
-""""
-@router.put("/change-password", status_code=status.HTTP_200_OK)
-def change_password(password: schema.ChangePassword, token: HTTPAuthorizationCredentials = Depends(token_auth_scheme),
-                    db: Session = Depends(user_repository.get_db)):
-    '''
-    Cambia la contrasena usuarios
-    '''
-    response = service.change_password(password, token.credentials, db)
-
-    return response
-
-
-
-"""
