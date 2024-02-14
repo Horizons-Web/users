@@ -23,19 +23,25 @@ jobs:
       ALGORITHM_EMAIL: ${{ secrets.ALGORITHM_EMAIL }}
       USERS_LOCALHOST: ${{ secrets.USERS_LOCALHOST }}
     steps:
-        - name: Checkout Repository
-          uses: actions/checkout@v4
-  
-        - name: Set up Python
-          uses: actions/setup-python@v4
-          with:
-            python-version: '3.x'
-  
-        - name: Install dependencies
-          run: pip install -r requirements.txt
-  
-        - name: Run tests
-          run: pytest
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Print environment variables
+        run: |
+          echo "ENVIRONMENT: $ENVIRONMENT"
+          echo "DATABASE_URI: $DATABASE_URI"
+          echo "DSN_SENTRY: $DSN_SENTRY"
+
+      - name: Run tests
+        run: pytest
       
   build-and-push:
     runs-on: ubuntu-latest
