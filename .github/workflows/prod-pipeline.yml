@@ -12,17 +12,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         
-      - name: Navigate to integration tests directory and run commands
+      - name: Navigate to integration tests directory and 
         run: |
-            cd integration_tests && sudo npm install && sudo npx playwright install && sudo npx codeceptjs run --steps
+            cd integration_tests && sudo npm install && sudo npx playwright install
             
-      - name: Install Dependencies
-        run: npm install
+      - name: Run Tests
+        run: |
+            cd integration_tests && sudo npx codeceptjs run --steps
 
-      - name: Run Integration Tests
-        run: npx codeceptjs run --steps
-        env:
-          CI: true
           
   run-unit-tests:
     runs-on: ubuntu-latest
