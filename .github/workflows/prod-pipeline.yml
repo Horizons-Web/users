@@ -14,7 +14,7 @@ jobs:
         
       - name: Navigate to integration tests directory and run commands
         run: |
-            cd integration_tests && npm install && npx playwright install && sudo npx codeceptjs run --steps
+            cd integration_tests && sudo npm install && sudo npx playwright install && sudo npx codeceptjs run --steps
             
       - name: Install Dependencies
         run: npm install
