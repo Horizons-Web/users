@@ -98,10 +98,11 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Navigate to integration tests directory
-        run: cd integration_tests
         
+      - name: Navigate to integration tests directory and run commands
+        run: |
+            cd integration_tests && npm install && npx codeceptjs run --steps
+            
       - name: Install Dependencies
         run: npm install
 
