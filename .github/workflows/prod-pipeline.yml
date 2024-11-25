@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ENVIRONMENT: dev-local
-      DATABASE_URI_LOCAL: postgresql://joaquin:rootroot@34.42.233.38:5432/users
+      DATABASE_URI_LOCAL: postgresql://postgres:rootroot@34.55.83.92:5432/users
       DSN_SENTRY: ${{ secrets.DSN_SENTRY }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       ALGORITHM: ${{ secrets.ALGORITHM }}
