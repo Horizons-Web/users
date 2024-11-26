@@ -1,7 +1,6 @@
 **/__pycache__/
 
 .idea/
-env/
 .env
 
 integration_tests/node_modules
