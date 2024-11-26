@@ -37,7 +37,7 @@ def login(user_credentials: user_schema.Login):
     user login
     """
     login_response = user_service.login(user_credentials)
-    return "none"
+    return login_response
 
 
 @router.post("/logout", status_code=status.HTTP_200_OK, response_model=None)
