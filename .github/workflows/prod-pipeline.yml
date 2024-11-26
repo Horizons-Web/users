@@ -12,7 +12,6 @@ jobs:
     env:
       ENVIRONMENT: dev-local
       DATABASE_URI_LOCAL: postgresql://postgres:rootroot@34.55.83.92:5432/users
-      DSN_SENTRY: ${{ secrets.DSN_SENTRY }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       ALGORITHM: ${{ secrets.ALGORITHM }}
       ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
@@ -91,7 +90,7 @@ jobs:
             --allow-unauthenticated \
             --add-cloudsql-instances crested-primacy-413823:us-central1:users \
             --project crested-primacy-413823 \
-            --update-env-vars ENVIRONMENT="${{ secrets.ENVIRONMENT }}",DATABASE_URI="${{ secrets.DATABASE_URI }}",DSN_SENTRY="${{ secrets.DSN_SENTRY }}",SECRET_KEY="${{ secrets.SECRET_KEY }}",ALGORITHM="${{ secrets.ALGORITHM }}",ACCESS_TOKEN_EXPIRE_MINUTES="${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}",SMTP_SERVER="${{ secrets.SMTP_SERVER }}",SMTP_PORT="${{ secrets.SMTP_PORT }}",EMAIL_ADDRESS="${{ secrets.EMAIL_ADDRESS }}",PASSWORD_EMAIL="${{ secrets.PASSWORD_EMAIL }}",SECRET_KEY_EMAIL="${{ secrets.SECRET_KEY_EMAIL }}",ALGORITHM_EMAIL="${{ secrets.ALGORITHM_EMAIL }}",USERS_LOCALHOST="${{ secrets.USERS_LOCALHOST }}"
+            --update-env-vars ENVIRONMENT="${{ secrets.ENVIRONMENT }}",DATABASE_URI="${{ secrets.DATABASE_URI }}",SECRET_KEY="${{ secrets.SECRET_KEY }}",ALGORITHM="${{ secrets.ALGORITHM }}",ACCESS_TOKEN_EXPIRE_MINUTES="${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}",SMTP_SERVER="${{ secrets.SMTP_SERVER }}",SMTP_PORT="${{ secrets.SMTP_PORT }}",EMAIL_ADDRESS="${{ secrets.EMAIL_ADDRESS }}",PASSWORD_EMAIL="${{ secrets.PASSWORD_EMAIL }}",SECRET_KEY_EMAIL="${{ secrets.SECRET_KEY_EMAIL }}",ALGORITHM_EMAIL="${{ secrets.ALGORITHM_EMAIL }}",USERS_LOCALHOST="${{ secrets.USERS_LOCALHOST }}"
 
   run-integration-tests:
     runs-on: ubuntu-latest

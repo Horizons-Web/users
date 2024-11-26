@@ -97,36 +97,3 @@ def logout(token: str):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error logging out")
 
-"""""
-
-def change_password(password: schema.ChangePassword, token: str, db: Session):
-
-    if repository.get_token_by_token(db, token.credentials) is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
-        )
-    token_data = auth.verify_token(token.credentials, "public")
-    if token_data is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
-        )
-
-    if password.new_password != password.confirm_password:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords not match"
-        )
-
-    if not verify(password.current_password, repository.get_password_by_id(db, token_data.user_id)):
-        raise (
-            HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid password")
-        )
-
-    repository.change_password(db, token_data.user_id, hash(password.new_password))   
-
-
-
- 
-
-
-
-"""
