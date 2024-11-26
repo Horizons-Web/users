@@ -92,27 +92,31 @@ jobs:
             --project crested-primacy-413823 \
             --update-env-vars ENVIRONMENT="${{ secrets.ENVIRONMENT }}",DATABASE_URI="${{ secrets.DATABASE_URI }}",SECRET_KEY="${{ secrets.SECRET_KEY }}",ALGORITHM="${{ secrets.ALGORITHM }}",ACCESS_TOKEN_EXPIRE_MINUTES="${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}",SMTP_SERVER="${{ secrets.SMTP_SERVER }}",SMTP_PORT="${{ secrets.SMTP_PORT }}",EMAIL_ADDRESS="${{ secrets.EMAIL_ADDRESS }}",PASSWORD_EMAIL="${{ secrets.PASSWORD_EMAIL }}",SECRET_KEY_EMAIL="${{ secrets.SECRET_KEY_EMAIL }}",ALGORITHM_EMAIL="${{ secrets.ALGORITHM_EMAIL }}",USERS_LOCALHOST="${{ secrets.USERS_LOCALHOST }}"
 
+
   run-integration-tests:
     runs-on: ubuntu-latest
     needs: build-push-deploy
-    outputs:
-      integration_failed: ${{ steps.run-tests.outcome != 'success' }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        
+
       - name: Navigate to integration tests directory and 
         run: |
             cd integration_tests && sudo npm install && sudo npx playwright install
-            
+
       - name: Run Tests
         run: |
             cd integration_tests && sudo npx codeceptjs run --steps
+        continue-on-error: true
+
+      - name: Set output for integration failed
+        run: echo "integration_failed=$([[ $? -ne 0 ]] && echo true || echo false)" >> $GITHUB_ENV
+
 
   rollback-build-push-deploy:
     runs-on: ubuntu-latest
     needs: run-integration-tests
-    if: needs.run-integration-tests.outputs.integration_failed == 'true'
+    if: env.integration_failed == 'true'
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
