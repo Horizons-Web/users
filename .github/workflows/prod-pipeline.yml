@@ -96,7 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-push-deploy
     outputs: 
-      integration_failed: ${{ steps.init.outputs.integration_failed }}
+      integration_failed: ${{ steps.integration-tests.outputs.integration_failed }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -106,13 +106,23 @@ jobs:
               cd integration_tests && sudo npm install && sudo npx playwright install
 
       - name: Run Tests
+        id: integration-tests
         run: |
               cd integration_tests && sudo npx codeceptjs run --steps
         continue-on-error: true
 
-      - name: Set output for integration failed
+      - name: Set output for integration status
+        id: set-failure-status
         run: |
-              echo "integration_failed=$([[ $? -ne 0 ]] && echo true || echo false)" >> $GITHUB_OUTPUT
+          if [ "${{ steps.integration-tests.outcome }}" == "failure" ]; then
+            echo "integration_failed=true" >> $GITHUB_OUTPUT
+          else
+            echo "integration_failed=false" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Print Integration Fail Status
+        run: |
+          echo "Integration Fail Status: ${{ steps.set-failure-status.outputs.integration_failed }}"
 
   rollback-build-push-deploy:
     runs-on: ubuntu-latest
