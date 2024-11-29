@@ -7,7 +7,7 @@ Scenario('Successful login', ({ I }) => {
   I.fillField('Password', 'test_password');
   I.click('Login');
   I.waitForText('Adventures', 10);
-  I.seeInCurrentUrl('https://frontend-4713090974.us-east1.run.app/home');
+  I.seeInCurrentUrl('https://frontend-4713090974.us-east1.run.app/homes');
 });
 
 Scenario('Fail login', ({ I }) => {
